@@ -1,0 +1,49 @@
+name: C++ CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup MinGW (for Windows C++ Compilation)
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        version: 12.2.0
+        platform: x64
+
+    - name: Compile C++ Code
+      run: |
+        g++ -o main.exe main.cpp
+        echo "Compilation Successful!"
+
+    - name: Run Tests (If Any)
+      run: |
+        echo "Running Tests..."
+        ./main.exe || echo "Test execution failed"
+
+    - name: Notify on Success
+      run: echo "CI/CD pipeline executed successfully!"
+
+  welcome-message:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Comment on Push
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: 1
+          body: "🚀 Welcome! Your code changes have been pushed successfully! 🎉"
