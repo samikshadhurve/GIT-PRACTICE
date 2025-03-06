@@ -2,30 +2,29 @@ name: Greet and Validate Code
 
 on:
   push:
+    branches:
+      - first  # Runs on push to 'first' branch
 
 jobs:
-  greet:
+  greet-user:
     runs-on: ubuntu-latest
     steps:
-      - name: Greet the User
-        run: echo "🎉 Hello, ${{ github.actor }}! Thanks for pushing code to this repository."
+      - name: Greet the user
+        run: echo "Hello! Thank you for contributing to the repository."
 
-  validate:
+  compile-cpp:
     runs-on: ubuntu-latest
+    needs: greet-user
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Find and Compile f7code
+      - name: Find and Compile f7code.cpp
         run: |
-          if [ -f "f7code.c" ]; then
-            gcc f7code.c -o f7code.out
+          if [ -f "f7code.cpp" ]; then
+            g++ f7code.cpp -o f7code.out
             if [ $? -eq 0 ]; then
-              echo "✅ Compilation Successful!"
+              echo "Compilation successful! 🎉"
             else
-              echo "❌ Error: f7code has compilation errors!"
-              exit 1
-            fi
-          else
-            echo "⚠️ No f7code.c file found. Skipping compilation."
-          fi
+              echo "Compilation failed! ❌ Check the errors above."
+             
