@@ -1,0 +1,31 @@
+name: Greet and Validate Code
+
+on:
+  push:
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet the User
+        run: echo "🎉 Hello, ${{ github.actor }}! Thanks for pushing code to this repository."
+
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Find and Compile f7code
+        run: |
+          if [ -f "f7code.c" ]; then
+            gcc f7code.c -o f7code.out
+            if [ $? -eq 0 ]; then
+              echo "✅ Compilation Successful!"
+            else
+              echo "❌ Error: f7code has compilation errors!"
+              exit 1
+            fi
+          else
+            echo "⚠️ No f7code.c file found. Skipping compilation."
+          fi
